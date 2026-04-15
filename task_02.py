@@ -141,7 +141,7 @@ def purchase_sell(datum, price, vol):
     return False
 
 
-def pretty_str(price): #Genererate a Summary of the variables
+def pretty_str(price): #genererate a summary of the variables
     global history, symbol, capital, name
 
     space = f"-"*30
@@ -169,10 +169,10 @@ purchase_sell('15-11-12', 5, 3)
 
 print(pretty_str(7))
 
-# print(check_timestamp("230126"))     
-# print(check_timestamp("26.01.23"))  
-# print(check_timestamp("23-01-26")) 
-# print(check_timestamp("20230126"))    
-# print(check_timestamp("26.01.2023"))  
-# print(check_timestamp("2023-01-26"))  
-# print(check_timestamp("abc"))         
+print(check_timestamp("230126"))     
+print(check_timestamp("26.01.23"))  
+print(check_timestamp("23-01-26")) 
+print(check_timestamp("20230126"))    
+print(check_timestamp("26.01.2023"))  
+print(check_timestamp("2023-01-26"))  
+print(check_timestamp("abc"))         
