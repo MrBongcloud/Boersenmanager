@@ -49,10 +49,10 @@ class Share:    #creation of class Share
         
         self.current_date = check_timestamp(datum)  
 
-        if type(price) not in [int, float]:
+        if type(price) not in [int, float]:         #test for int or float
             self.current_price = -1.0
             self.profit_loss = 0.0
-            self.bound_capital = 0.0     #test for int or float
+            self.bound_capital = 0.0     
             return False
 
         self.current_price = price  
@@ -60,8 +60,6 @@ class Share:    #creation of class Share
         self.bound_capital = price*self.total_volume()
 
         return True
-
-        #purchase or sell of stock integrated into history 
 
 
     def profit_or_loss(self): #vol * (current_price-purchase_price)
@@ -72,6 +70,7 @@ class Share:    #creation of class Share
             pl += (self.current_price-self.history[i]['actual_price'])*self.history[i]['purchased_volume']
 
         return pl
+
 
     def purchase_sell(self, vol):
         global capital
@@ -153,12 +152,12 @@ def check_timestamp(any_time):
         return any_time
 
     elif len(any_time) == 8:    #len 8
-        if any_time[2] == '.':
+        if any_time[2] == '.' and any_time[5] == '.':
             any_time = '20' + any_time[6:] + '-' + any_time[2:5] + '-' + any_time[:2]
             any_time = any_time.replace('.', '')
             any_time = datetime.strptime(any_time, '%Y-%m-%d').date() 
             return any_time
-        elif any_time[2] == '-':
+        elif any_time[2] == '-' and any_time[5] == '-':
             any_time = '20' + any_time
             any_time = datetime.strptime(any_time, '%Y-%m-%d').date()
             return any_time
@@ -170,7 +169,7 @@ def check_timestamp(any_time):
             return today
 
     elif len(any_time) == 10:   #len 10
-        if any_time[2] == '.':
+        if any_time[2] == '.' and any_time[5] == '.':
             any_time = any_time[6:] + '-' + any_time[3:6] +'-'+ any_time[:2]
             any_time = any_time.replace('.', '')
             any_time = datetime.strptime(any_time, '%Y-%m-%d').date() 
@@ -189,19 +188,27 @@ def check_timestamp(any_time):
 #testing
 
 if __name__ == '__main__':
-    stock = Share('Apple', 'AAPL')      #name apple symbol apple
-    change_available_capital(20)        #cap=20
-    stock.set_current_price(3)          #price = 3
-    stock.purchase_sell(2)
-    stock.set_current_price(4)          #price = 4
-    stock.purchase_sell(-1)             #cap=18 vol=1
-    stock.set_current_price(5)          #price = 5
-    stock.purchase_sell(3)              #cap = 3 vol=4
-    stock.set_current_price(7)          #price = 7
-    print(stock)                        #bd_cap = 28 pl=10
+    stock = Share('Apple', 'AAPL')          #name apple symbol apple
+    change_available_capital(20)            #cap=20
+    stock.set_current_price(3)              #price = 3
+    stock.purchase_sell(2)                  #v=2
+    stock.set_current_price(4)              #price = 4
+    stock.purchase_sell(-1)                 #cap=18 vol=1
+    stock.set_current_price(5)              #price = 5
+    stock.purchase_sell(3)                  #cap = 3 vol=4
+    stock.set_current_price(7)              #price = 7
+    print(stock)                            #bd_cap = 28 pl=10
     
-    print(stock.set_current_price('a')) #gen error
-    print(stock)                        #price=-1 Bound_Cap=0 pl = 0
+    print(stock.set_current_price('a'))     #gen error
+    print(stock)                            #price=-1 Bound_Cap=0 pl = 0
+
+    print(check_timestamp("230126"))     
+    print(check_timestamp("26.01m23"))  
+    print(check_timestamp("23-01-26")) 
+    print(check_timestamp("20230126"))    
+    print(check_timestamp("26.01.2023"))  
+    print(check_timestamp("2023-01-26"))  
+    print(check_timestamp("abc"))
     
 
     
