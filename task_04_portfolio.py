@@ -30,7 +30,7 @@ class Portfolio():    #ceation of class
             
 
     def purchase_sell(self, symbol, volume, date_string):
-        """""""
+        """Purchase sell """
 
 
         if symbol not in self.share:
