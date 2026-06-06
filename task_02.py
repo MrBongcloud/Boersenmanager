@@ -104,7 +104,7 @@ def purchase_sell(datum, price, vol):
         if sell_vol > total_volume():
             return False
         
-        capital += price * sell_vol
+        change_available_capital(-vol*price)
 
         i = len(history) - 1
         while i >= 0 and sell_vol > 0:
@@ -123,20 +123,15 @@ def purchase_sell(datum, price, vol):
         return True
 
     if vol > 0:  #buying
-        if price * vol > capital:
-            return False 
-        else:
-            
-
-            capital -= price * vol
-
+        if change_available_capital(-vol*price):
+        
             history.append({"Zeitpunkte":check_timestamp(datum),
             "purchased_volume":vol,
             "actual_price":price, 
             })
-
-
             return True
+        else: 
+            return False
 
     return False
 
@@ -164,15 +159,11 @@ def pretty_str(price): #genererate a summary of the variables
 set_stock("Apple", "AAPL")
 change_available_capital(20)
 purchase_sell('10.11.12', 3, 2)
-purchase_sell('13.11.12',4, -1)
-purchase_sell('15-11-12', 5, 3)
+print(pretty_str(3))
 
-print(pretty_str(7))
 
-print(check_timestamp("230126"))     
-print(check_timestamp("26.01.23"))  
-print(check_timestamp("23-01-26")) 
-print(check_timestamp("20230126"))    
-print(check_timestamp("26.01.2023"))  
-print(check_timestamp("2023-01-26"))  
-print(check_timestamp("abc"))         
+purchase_sell('13.11.12',3, -1)
+print(pretty_str(3))
+#purchase_sell('15-11-12', 5, 3)
+#print(pretty_str(7))
+
