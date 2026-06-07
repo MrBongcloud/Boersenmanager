@@ -4,6 +4,7 @@ import sys
 import os
 
 import task_06_portfolio
+import task_07_share
 
 
 #logging
@@ -26,6 +27,9 @@ class PortfolioCMD:
 
         self.portfolio.load_all_shares()
         log.info(f"Portfolio {portfolio_name} mit {len(self.portfolio.share)} Aktien initialisiert")
+
+        #APIKEy
+        self.APIKEY = "demo"
 
     def _list_shares(self, mode="symbol", filter_value=None):
         shares = list(self.portfolio.share.values())
@@ -63,6 +67,9 @@ class PortfolioCMD:
         parser.add_argument("-lp", "--list_profit", action="store_true")
         parser.add_argument("-ll", "--list_loss", action="store_true")
         parser.add_argument("-f", "--filter", type=str)
+        parser.add_argument("-a", "--add", nargs="+", metavar=("SYMBOL"))
+        parser.add_argument("-u", "--update", action="store_true")
+        parser.add_argument("-k", "--apikey")
 
         return parser
 
@@ -81,6 +88,9 @@ class PortfolioCMD:
         
         #-q
         if args.quit:
+            for share in self.portfolio:
+                share.save_to_csv()
+            log.info("Portfolio closed, shares saved.")
             return False
         
         #-c
@@ -90,14 +100,14 @@ class PortfolioCMD:
         #-s
         if args.set_capital is not None:
             self.portfolio.change_available_capital(args.set_capital)
-
+        
         #-o
         if args.order is not None:
             symbol, vol_str, date_str = args.order
             try:
                 volume = int(vol_str)
             except ValueError:
-                log.warning(f"Invalid volume: {vol_str}")
+                log.warning(f"Ungueltiges Volumen: {vol_str}")
                 return True
 
             self.portfolio.purchase_sell(symbol,volume,date_str)
@@ -121,9 +131,18 @@ class PortfolioCMD:
                 except LookupError:
                     log.warning(f"No stock price for {share.symbol} on {args.date} ")
 
-        
+        #-a
+        if args.add is not None:
+            for symbol in args.add:
+                self.portfolio.add_share(symbol)
 
-        
+        #-u
+        if args.update:
+            api_key = args.apikey if args.apikey is not None else self.APIKEY
+            failed = self.portfolio.update_all(api_key)
+
+            if failed:
+                print(f"Data of stock {failed} not found.")
 
         return True
 

@@ -1,6 +1,6 @@
 #Imports
 import os
-import task_06_share
+import task_07_share
 #Functions and Modules
 class Portfolio():    #ceation of class
 
@@ -8,21 +8,27 @@ class Portfolio():    #ceation of class
         self.name = name
         self.base_path = basepath
         self.capital = 0.0
-        self.share = {}         
+        self.share = {}    
+
+        # attributes for Iteration
+        self._iter_keys = []
+        self._iter_index = 0
+     
 
     def change_available_capital(self, change_capital): 
         """Change Capital"""
         new_capital = self.capital + change_capital
         if new_capital < 0:             #Capital should be bigger than 0
             return False
-        self.capital = new_capital      #Write new Capital      
+        self.capital = new_capital      #Write new Capital  
+        return True    
 
     def load_all_shares(self):
         """loading all shares out of basepath into Shares Object"""
         for names in os.listdir(self.base_path):
             file_path = os.path.join(self.base_path, names)
             try:
-                share = task_06_share.Share(file_path)
+                share = task_07_share.Share(file_path)
             except ValueError:
                 continue  # ungueltiger Dateiname -> ueberspringen
             share.load_data()
@@ -74,14 +80,42 @@ class Portfolio():    #ceation of class
         current_share = self._iter_values[self._iter_index]
         self._iter_index += 1
         return current_share
+    
+    def update_all(self, APIKEY="demo"):
+        """update of all shares via download"""
+
+        failed = []
+        for symbol in sorted(self.share.keys()):
+            share = self.share[symbol]
+            if not hasattr(share, "update"):
+                failed.append(symbol)
+                continue
+            try:
+                if not share.update(APIKEY):
+                    failed.append(symbol)
+            except Exception as error:
+                print("ERROR for", symbol, ":", type(error).__name__, error)
+                failed.append(symbol)
+        return failed
+    
+    def add_share(self, symbol):
+        file_path = os.path.join(self.base_path, symbol + ".csv")
+
+        try:
+            share = task_07_share.Share(file_path)
+        except ValueError:
+            return False
+
+        self.share[share.symbol] = share
+        return True
+
+
 
         
     
 
 # testing
-
 if __name__ == '__main__':
-
     depot = Portfolio('yolo', 'base_folder')
     depot.load_all_shares()
 
