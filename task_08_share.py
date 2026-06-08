@@ -149,9 +149,9 @@ class Share:    #creation of class Share
 
         :return: Liste von Dictionaries mit Datum als ISO-String
         """
-        return [{"date": entry["date"].isoformat(),
-                 "price": entry["price"],
-                 "volume": entry["volume"]}
+        return [{"Zeitpunkte": entry["Zeitpunkte"].isoformat(),
+                 "actual_price": entry["actual_price"],
+                 "purchased_volume": entry["purchased_volume"]}
                 for entry in self.history]
 
     def restore_history(self, history_list):
@@ -165,9 +165,9 @@ class Share:    #creation of class Share
         for entry in history_list:
             try:
                 self.history.append({
-                    "date": datetime.date.fromisoformat(entry["date"]),
-                    "price": float(entry["price"]),
-                    "volume": int(entry["volume"]),
+                    "Zeitpunkte": date.fromisoformat(entry["Zeitpunkte"]),
+                    "actual_price": float(entry["actual_price"]),
+                    "purchased_volume": int(entry["purchased_volume"]),
                 })
             except (KeyError, ValueError, TypeError):
                 # Fehlerhafte Eintraege ueberspringen - kein Absturz

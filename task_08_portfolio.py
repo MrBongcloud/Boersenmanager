@@ -206,8 +206,8 @@ if __name__ == '__main__':
     depot.change_available_capital(100000.0)
 
     # Käufe an einem Datum, das in den CSV-Daten vorhanden ist
-    print("Kauf MSFT:", depot.purchase_sell("MSFT", 50, "2021-02-14"))
-    print("Kauf NVDA:", depot.purchase_sell("NVDA", 30, "2021-01-14"))
+    print("Kauf BMW:", depot.purchase_sell("BMW.DE", 5, "2021-02-14"))
+    print("Kauf NVDA:", depot.purchase_sell("DB", 3, "2021-01-14"))
     print("Restkapital:", round(depot.capital, 2))
 
     # Speichern -> füllt die JSON-Datei
