@@ -81,6 +81,10 @@ class Portfolio():    #ceation of class
         self._iter_index += 1
         return current_share
     
+    def __len__(self):
+        """Anzahl der verwalteten Aktien."""
+        return len(self.share)
+    
     def update_all(self, APIKEY="demo"):
         import time
         failed = []
