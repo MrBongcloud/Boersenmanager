@@ -77,6 +77,9 @@ class PortfolioCMD:
         """eval of user input"""
 
         sys.argv = [os.path.basename(__file__)]
+        cmd_input = cmd_input.strip()
+        if cmd_input.startswith(":"):
+            cmd_input = cmd_input[1:].strip()
 
         parser = self._build_parser()
 
@@ -136,10 +139,13 @@ class PortfolioCMD:
             for symbol in args.add:
                 self.portfolio.add_share(symbol)
 
+        #-k
+        if args.apikey is not None:
+            self.APIKEY = args.apikey
         #-u
         if args.update:
-            api_key = args.apikey if args.apikey is not None else self.APIKEY
-            failed = self.portfolio.update_all(api_key)
+            if args.update:
+                failed = self.portfolio.update_all(self.APIKEY)
 
             if failed:
                 print(f"Data of stock {failed} not found.")
@@ -158,5 +164,4 @@ if __name__ == "__main__":
     while interaction_loop:
         cmd = input("--> Ihre Eingabe (-q Ende): ")
         interaction_loop = p.evaluate_user_input(cmd)
-
 

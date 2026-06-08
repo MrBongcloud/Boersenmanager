@@ -96,7 +96,7 @@ class Share:    #creation of class Share
             "symbol": self.symbol,
             "apikey": APIKEY,
             "datatype": "csv",
-            "outputsize": "full",
+            "outputsize": "compact",
         })
         url = _ALPHA_VANTAGE_URL + "?" + query
 
@@ -111,8 +111,10 @@ class Share:    #creation of class Share
 
         new_rows = self._parse_csv_lines(raw.splitlines())
         if not new_rows:
+            print(f"\nDEBUG: No valid CSV data for {self.symbol}")
+            print("First 500 characters of server response:")
+            print(raw[:500])
             return False
-
         # not overwriting, just new data
         for row_date, row in new_rows.items():
             self.share_data.setdefault(row_date, row)
@@ -130,13 +132,15 @@ class Share:    #creation of class Share
 
         try:
             with open(self.path_to_csv_file, "w", encoding="utf-8") as csv_file:
-                csv_file.write("Date,Close\n")
+                csv_file.write("Date,Open,High,Low,Close,Adj Close,Volume\n")
 
-                for row_date in sorted(self.share_data.keys()):
-                    csv_file.write(f"{row_date.isoformat()},{self.share_data[row_date]}\n")
+                for row_date, price in sorted(self.share_data.items()):
+                    csv_file.write(f"{row_date.isoformat()},{price},{price},{price},{price},0.0,0\n")
 
         except OSError:
+
             return False
+
 
         log.info(f"Stock {self.symbol} saved in {self.path_to_csv_file}.")
         return True
@@ -255,7 +259,7 @@ class Share:    #creation of class Share
 
                     try:
                         current_datum = check_timestamp(element[0])
-                        close_price = float(element[1])
+                        close_price = float(element[4])
                         self.share_data[current_datum] = close_price
                     except (ValueError, IndexError):
                         continue

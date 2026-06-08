@@ -82,8 +82,7 @@ class Portfolio():    #ceation of class
         return current_share
     
     def update_all(self, APIKEY="demo"):
-        """update of all shares via download"""
-
+        import time
         failed = []
         for symbol in sorted(self.share.keys()):
             share = self.share[symbol]
@@ -96,6 +95,7 @@ class Portfolio():    #ceation of class
             except Exception as error:
                 print("ERROR for", symbol, ":", type(error).__name__, error)
                 failed.append(symbol)
+            time.sleep(1.5)   # 1 request/second
         return failed
     
     def add_share(self, symbol):
@@ -105,6 +105,9 @@ class Portfolio():    #ceation of class
             share = task_07_share.Share(file_path)
         except ValueError:
             return False
+        
+
+        share.load_data()
 
         self.share[share.symbol] = share
         return True
